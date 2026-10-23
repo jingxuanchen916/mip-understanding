@@ -1,11 +1,13 @@
 # Understanding LLM Performance Degradation in Multi-Instance Processing: The Roles of Instance Count and Context Length
 
 <p align="center">
-    <a href="https://arxiv.org/abs/2603.22608" target="_blank" rel="noopener noreferrer">
-        <img alt="paper" src="https://img.shields.io/badge/paper-paper?logo=arxiv&logoColor=%23B31B1B&labelColor=white&color=%23B31B1B">
-    </a>
+  <a href="https://arxiv.org/abs/2603.22608">
+    <img alt="arXiv" src="https://img.shields.io/badge/arXiv-2603.22608-b31b1b.svg">
+  </a>
+  <a href="https://huggingface.co/datasets/cjxhwyt/mip-understanding">
+    <img alt="Hugging Face Dataset" src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-yellow">
+  </a>
 </p>
-
 
 
 We investigate how large language models handle multi-instance processing (MIP), where multiple inputs must be analysed and aggregated within a single prompt. Our results show that performance degrades as the number of instances increases, with instance count having a stronger impact than context length.
