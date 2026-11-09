@@ -9,99 +9,61 @@
   </a>
 </p>
 
-
-We investigate how large language models handle multi-instance processing (MIP), where multiple inputs must be analysed and aggregated within a single prompt. Our results show that performance degrades as the number of instances increases, with instance count having a stronger impact than context length.
-
-<p align="center">
-  <img src="assets/MIP.png" height="259" style="max-width:48%;" />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/RQ2.png" height="259" style="max-width:48%;" />
-</p>
-
-<br>
+In multi-instance processing (MIP), an LLM processes many individual inputs and combines their results into a single answer. This dataset covers eight tasks with 2 to 2,000 instances per prompt, asking models to aggregate over all instances. Our study finds that LLM performance drops as the number of instances grows, with instance count having a stronger effect than context length alone.
 
 <p align="center">
-  <img src="assets/Model.png" width="90%" />
+  <img src="mip-understand.png" width="100%" alt="Success rate of each model as the number of instances grows from 2 to 2,000">
 </p>
 
+## Data
 
-## Quick Start
+```python
+from datasets import load_dataset
 
-### 1. Install and Setup
+data = load_dataset("jingxuanchen916/mip-understanding", split="test")
+```
+
+The [dataset card](https://huggingface.co/datasets/jingxuanchen916/mip-understanding) describes the
+tasks and the columns.
+
+## Evaluate a model
 
 ```bash
-# Install dependencies
 pip install -r requirements.txt
-
-# Configure API key
-cp .env.example .env
-# Edit .env and add your API key / endpoint
-# You can switch from OpenRouter to any OpenAI-compatible endpoint by changing BASE_URL in .env
+export OPENROUTER_API_KEY=...   # sent only to OpenRouter; another endpoint reads API_KEY
+python run.py --model meta-llama/llama-4-scout             # --base-url for e.g. a local vLLM server
+python score.py results/*.jsonl --by task n_instances
 ```
 
-### 2. Configure Experiment
+`run.py` writes one line per prompt to `results/<model>.jsonl` and skips the rows already there
+when re-run; `--task` and `--limit` run a subset. The defaults follow the paper: temperature 0, at
+most 20,000 output tokens, and up to 3 attempts when no answer can be parsed. The prompts
+(`prompts.yaml`) are the paper's with a JSON-only answer format, so results can differ slightly
+from the paper's.
 
-Edit configuration files in `config/` folder:
-- `models.yaml` - List of models to evaluate
-- `selections/`, `shuffle/`, `artificial_length/`, `natural_length/` - Experiment configurations
-- `questions/` - Question templates for each dataset
+## Our work on Multi-Instance Processing (MIP)
 
-### 3. Run Evaluation
-
-```bash
-# Use default config/experiment.yaml without noise injection
-python run_evaluation.py
-
-# With specific config file
-python run_evaluation.py --config config/natural_length/tweets.yaml
-
-# With noise augmentation (inject irrelevant context at head/middle/tail/random position)
-python run_evaluation.py --augment_approach tail
-```
-
-Results are saved in timestamped `outputs/` folders with:
-- `summary.csv` - Complete results table
-- `checkpoint.csv` - Resume checkpoint
-- `ground_truth.csv` - Expected answers
-- `raw/` - Raw API responses
-- `evaluation.log` - Detailed logs
-
-Notes:
-- Token cost fields in `summary.csv` are only populated when `config/model_info.csv` exists.
-- If `config/model_info.csv` is missing, evaluation still runs and cost fields remain empty.
-- Three columns are required by `config/model_info.csv`: ``model_name``, ``prompt_price_per_1m``, ``completion_price_per_1m``.
-
-## Configuration
-
-Example configuration (`config/experiment.yaml`):
-
-```yaml
-dataset:
-  type: tweets
-  path: data/tweets
-
-evaluation:
-  models: null              # null = all models, or ['model1', 'model2']
-  questions: null           # null = all questions, or ['Q1', 'Q2']
-  n_trials: 1               # Number of trials per combination
-  max_concurrent: 5         # Concurrent API requests (1-200)
-  resume_from: null         # Timestamp to resume interrupted run
-
-# Noise injection is set via CLI flag, not in config:
-# python run_evaluation.py --augment_approach [default|head|middle|tail|random]
-
-tweets:
-  instance_selection: first_n    # 'first_n', 'sliding_window', or 'custom'
-  counts: [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000]  # Data sizes to test
-```
-
-### Resume Interrupted Runs
-
-Set `resume_from: "YYYYMMDD_HHMMSS"` in your config to continue from a checkpoint.
+<table>
+  <tr>
+    <td><b>MIP-Understanding</b></td>
+    <td><a href="https://aclanthology.org/2026.acl-long.1470/">Understanding LLM Performance Degradation in Multi-Instance Processing: The Roles of Instance Count and Context Length</a> (ACL 2026)</td>
+    <td><a href="https://github.com/jingxuanchen916/mip-understanding">💻 Code</a></td>
+    <td><a href="https://huggingface.co/datasets/jingxuanchen916/mip-understanding">🤗 Dataset</a></td>
+  </tr>
+  <tr>
+    <td><b>MIP-Order</b></td>
+    <td><a href="https://arxiv.org/abs/2610.29057">Does Every Instance Count Equally? Order Effects in LLM Multi-Instance Processing</a></td>
+    <td><a href="https://github.com/jingxuanchen916/mip-order">💻 Code</a></td>
+    <td><a href="https://huggingface.co/datasets/jingxuanchen916/mip-order">🤗 Dataset</a></td>
+  </tr>
+</table>
 
 ## Citation
-Please cite the original [ACL 2026 paper](https://aclanthology.org/2026.acl-long.1470/) if you use any of the resources in this repository.
-```
+
+Please cite the [ACL 2026 paper](https://aclanthology.org/2026.acl-long.1470/) if you use any of
+the resources in this repository.
+
+```bibtex
 @inproceedings{chen-etal-2026-understanding-llm,
     title = "Understanding {LLM} Performance Degradation in Multi-Instance Processing: The Roles of Instance Count and Context Length",
     author = "Chen, Jingxuan  and
@@ -121,5 +83,4 @@ Please cite the original [ACL 2026 paper](https://aclanthology.org/2026.acl-long
     pages = "31851--31884",
     ISBN = "979-8-89176-390-6"
 }
-
 ```

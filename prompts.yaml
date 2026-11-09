@@ -1,0 +1,152 @@
+# One prompt template per task. A prompt is the template, a blank line, then
+# "Instance 1: <text>", "Instance 2: <text>", ... separated by blank lines (see run.py).
+
+arithmetic: |
+  Task: Solve all the provided arithmetic questions and calculate the sum of all answers.
+
+  Instructions:
+  - Calculate the answer for each arithmetic operation
+  - Sum all individual answers
+  - Provide exact values without unnecessary trailing zeros (e.g., "5" not "5.0")
+  - Prefix negatives with '-' (e.g., "-42")
+  - For decimal results, keep only necessary decimal places (e.g., "3.14" not "3.140")
+  - Return only a JSON object with the field "answer".
+
+  Example response format:
+  {"answer": "42"}
+
+  End your response with the JSON object containing your final answer.
+language: |
+  Task: Count how many of the provided paragraphs are written in English.
+
+  Background:
+  The paragraphs are written in one of four languages:
+  - English (label 0)
+  - Chinese (label 1)
+  - Persian (label 2)
+  - Spanish (label 3)
+
+  Instructions:
+  - Read each paragraph carefully
+  - Identify the language of each paragraph
+  - Count how many paragraphs are written in English
+  - Do not count paragraphs in other languages
+  - Return only a JSON object with the field "answer".
+
+  Example response format:
+  {"answer": 5}
+
+  End your response with the JSON object containing your final answer.
+ner: |
+  Task: Count how many times the entity "PERSON" appears across all provided sentences.
+
+  Background:
+  - An entity may consist of multiple words that form a contiguous fragment in the text
+  - You need to first identify entities in the sentence (named entity recognition), then count them
+  - Two entities may appear consecutively without punctuation or words between them
+  - No entity overlaps occur (each word belongs to at most one entity)
+  - Some words do not belong to any entity
+
+  Entity Definition:
+  - PERSON: names of people, real or fictional, but not nominals
+
+  Instructions:
+  - Identify all PERSON entities across all sentences
+  - Count the total number of PERSON entity mentions (not unique entities, but total occurrences)
+  - Each distinct mention counts as one occurrence, even if it refers to the same person
+  - Return only a JSON object with the field "answer".
+
+  Example response format:
+  {"answer": 5}
+
+  End your response with the JSON object containing your final answer.
+news: |
+  Task: Count how many of the provided news articles belong to the 'tech' category.
+
+  Background:
+  - Each news article belongs to one of 5 categories:
+    * business
+    * entertainment
+    * politics
+    * sport
+    * tech
+  - You need to classify each article based on its content and context
+
+  Instructions:
+  - Read each news article carefully
+  - Identify which category each article belongs to based on the content
+  - Count how many articles belong to the 'tech' category
+  - Do not count articles from other categories (business, entertainment, politics, sport)
+  - Return only a JSON object with the field "answer".
+
+  Example response format:
+  {"answer": 42}
+
+  End your response with the JSON object containing your final answer.
+parity: |
+  Task: Count how many of the provided numbers are odd.
+
+  Background:
+  - An odd number is an integer that is not evenly divisible by 2
+  - Odd numbers end in 1, 3, 5, 7, or 9
+  - An even number is an integer that is evenly divisible by 2
+  - Even numbers end in 0, 2, 4, 6, or 8
+
+  Instructions:
+  - Check each number to determine if it is odd or even
+  - Count how many numbers are odd
+  - Do not count even numbers
+  - Return only a JSON object with the field "answer".
+
+  Example response format:
+  {"answer": 3}
+
+  End your response with the JSON object containing your final answer.
+sentiment: |
+  Task: Count how many of the provided movie reviews are positive.
+
+  Instructions:
+  - Each review has a sentiment: positive or negative
+  - Count only the reviews with positive sentiment
+  - Return the total count of positive reviews
+  - Return only a JSON object with the field "answer".
+
+  Example response format:
+  {"answer": 42}
+
+  End your response with the JSON object containing your final answer.
+tweets: |
+  Task: Count how many times the word "women" appears in the provided tweets.
+
+  Instructions:
+  - Search is case-insensitive (e.g., "women", "Women", "WOMEN" all count)
+  - Count occurrences that include the substring "women" (e.g., "women", "womens", "women's", "womenfolk")
+  - Do not count forms that lack the substring "women" (e.g., "woman", "womankind")
+  - Count all occurrences across all tweets, not just unique tweets
+  - Return only a JSON object with the field "answer".
+
+  Example response format:
+  {"answer": 42}
+
+  End your response with the JSON object containing your final answer.
+wsd: |
+  Task: Count how many paragraphs contain the word "apple" referring to the company (Apple Inc.), not the fruit.
+
+  Background:
+  - Each paragraph contains exactly one occurrence of the word "apple" (case-insensitive, as a complete word, not as part of another word)
+  - This "apple" can mean either:
+    * The company: Apple Inc., the technology company
+    * The fruit: the edible fruit that grows on apple trees
+  - You need to determine the meaning of "apple" in each paragraph based on context
+
+  Instructions:
+  - Read each paragraph carefully
+  - Identify whether "apple" refers to the company or the fruit based on contextual clues
+  - Count how many paragraphs where "apple" means the company (Apple Inc.)
+  - Do not count paragraphs where "apple" means the fruit
+  - Return only a JSON object with the field "answer".
+
+  Example response format:
+  {"answer": 42}
+
+  End your response with the JSON object containing your final answer.
